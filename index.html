@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultato</title>
+    <style>
+        body {
+            font-family: monospace, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 500px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+        .ticket-id {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="content"></div>
+
+    <script>
+        // Controlla se l'utente ha già scansionato da questo dispositivo
+        const hasScanned = localStorage.getItem('qr_scanned_status');
+        const contentDiv = document.getElementById('content');
+
+        if (hasScanned) {
+            // SCANSIONI SUCCESSIVE: Errore 404 simulato
+            document.title = "404 Not Found";
+            contentDiv.innerHTML = `
+                <h1>404 Not Found</h1>
+                <p>The requested URL was not found on this server.</p>
+                <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
+                <p style="font-size: 0.9rem; color: #888;">Biglietto già convalidato o non più disponibile.</p>
+            `;
+        } else {
+            // PRIMA SCANSIONE: Assegna vittoria o perdita (50% di probabilità)
+            const isWin = Math.random() < 0.5;
+            
+            // Salva lo stato per bloccare le scansioni future
+            localStorage.setItem('qr_scanned_status', 'used');
+
+            if (isWin) {
+                contentDiv.innerHTML = `
+                    <h1 style="color: #2e7d32;">HAI VINTO</h1>
+                    <p>Questo biglietto risulta vincente.</p>
+                    <div class="ticket-id">STATO: RISCOSSO</div>
+                `;
+            } else {
+                contentDiv.innerHTML = `
+                    <h1 style="color: #c62828;">NON HAI VINTO</h1>
+                    <p>Spiacenti, questo biglietto non è vincente.</p>
+                    <div class="ticket-id">STATO: ANNULLATO</div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
